@@ -1,0 +1,28 @@
+trigger:
+- main
+pool: logesh6
+steps:
+- script: echo &quot;Stage 1 - Setting up Java version.&quot;
+- task: Maven@3
+inputs:
+mavenPomFile: &#39;pom.xml&#39;
+mavenOptions: &#39;-Xmx3072m&#39;
+javaHomeOption: &#39;JDKVersion&#39;
+jdkArchitectureOption: &#39;x64&#39;
+publishJUnitResults: true
+testResultsFiles: &#39;**/surefire-reports/TEST-*.xml&#39;
+goals: &#39;package&#39;
+- script: echo &quot;Stage 2 - Maven build and test completed successfully.&quot;
+- task: PublishBuildArtifacts@1
+inputs:
+PathtoPublish: &#39;$(System.DefaultWorkingDirectory)/target&#39;
+ArtifactName: &#39;my-java-artifacts&#39;
+publishLocation: &#39;container&#39;
+- script: echo &quot;Stage 3 - Artifacts published successfully.&quot;
+- task: PublishTestResults@2
+inputs:
+testResultsFormat: &#39;JUnit&#39;
+testResultsFiles: &#39;**/surefire-reports/TEST-*.xml&#39;
+failTaskOnFailedTests: true
+searchFolder: &#39;$(System.DefaultWorkingDirectory)&#39;
+- script: echo &quot;Regression test is successfully completed.”
